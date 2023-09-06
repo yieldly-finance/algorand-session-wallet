@@ -73,6 +73,7 @@ class PeraWallet implements Wallet {
   async doSign(defaultAcct: string, txns: Transaction[]): Promise<SignedTxn[]> {
     const signerTxns = txns.map((v) => ({
       txn: v,
+      signers: [new TextDecoder().decode(v.from.publicKey)],
     }));
 
     return this.walletConn
