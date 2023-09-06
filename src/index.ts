@@ -4,6 +4,7 @@ import InsecureWallet from "./wallets/insecure";
 import WC from "./wallets/walletconnect";
 import { PermissionCallback, Wallet, SignedTxn } from "./wallets/wallet";
 import { Transaction, TransactionSigner } from "algosdk";
+import PeraWallet from "./wallets/pera";
 
 export {
   PermissionResult,
@@ -17,6 +18,7 @@ export const allowedWallets = {
   "algo-signer": AlgoSignerWallet,
   "my-algo-connect": MyAlgoConnectWallet,
   "insecure-wallet": InsecureWallet,
+  "pera-wallet": PeraWallet,
 };
 
 const walletPreferenceKey = "wallet-preference";
@@ -104,9 +106,11 @@ export class SessionWallet {
   getSigner(): TransactionSigner {
     return (txnGroup: Transaction[], indexesToSign: number[]) => {
       return Promise.resolve(this.signTxn(txnGroup)).then((txns) => {
-        return txns.map((tx) => {
-          return tx.blob;
-        }).filter((_, index) => indexesToSign.includes(index));
+        return txns
+          .map((tx) => {
+            return tx.blob;
+          })
+          .filter((_, index) => indexesToSign.includes(index));
       });
     };
   }
