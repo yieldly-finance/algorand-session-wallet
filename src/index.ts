@@ -3,7 +3,7 @@ import MyAlgoConnectWallet from "./wallets/myalgoconnect";
 import InsecureWallet from "./wallets/insecure";
 import WC from "./wallets/walletconnect";
 import { PermissionCallback, Wallet, SignedTxn } from "./wallets/wallet";
-import { Transaction, TransactionSigner } from "algosdk";
+import { Transaction, TransactionSigner, encodeAddress } from "algosdk";
 import PeraWallet from "./wallets/pera";
 
 export {
@@ -168,12 +168,10 @@ export class SessionWallet {
     if (this.wallet.displayName() === "Pera Wallet")
       return this.wallet.signTxn(txns);
 
-    const connectedAccounts = this.wallet.accounts.map((v) => v.toLowerCase());
     return this.wallet.signTxn(
       txns.filter(
         (v) =>
-          new TextDecoder().decode(v.from.publicKey).toLowerCase() in
-          connectedAccounts
+          encodeAddress(v.from.publicKey) === this.wallet.getDefaultAccount()
       )
     );
   }
