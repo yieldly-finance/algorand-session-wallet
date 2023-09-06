@@ -164,6 +164,13 @@ export class SessionWallet {
 
   async signTxn(txns: Transaction[]): Promise<SignedTxn[]> {
     if (!this.connected() && !(await this.connect())) return [];
-    return this.wallet.signTxn(txns);
+    return this.wallet.displayName() === "Pera Wallet"
+      ? this.wallet.signTxn(txns)
+      : this.wallet.signTxn(
+          txns.filter(
+            (v) =>
+              new TextDecoder().decode(v.from.publicKey) in this.wallet.accounts
+          )
+        );
   }
 }
